@@ -111,30 +111,31 @@ void app_main(void) {
         ESP_LOGE(TAG, "Failed to open file for reading");
     } else {
         char line[50];
-        fgets(line, sizeof(line), f);
-        fclose(f);
-        // strip newline
-        char *pos = strchr(line, '\n');
-        if (pos) {
-            *pos = '\0';
+        while (fgets(line, sizeof(line), f)) {
+            // strip newline
+            char *pos = strchr(line, '\n');
+            if (pos) {
+                *pos = '\0';
+            }
+            ESP_LOGI(TAG, "Read from file: %s", line);
         }
-        ESP_LOGI(TAG, "Read from file: %s", line);
+        fclose(f);
     }
 
     srand(esp_timer_get_time());
 
-    uint32_t restart_delay = rand() % 10000;
+    uint32_t restart_delay = rand() % 30000;
     ESP_LOGI(TAG, "restart in %d", restart_delay);
     vTaskDelay(pdMS_TO_TICKS(restart_delay));
 
-    f = fopen("/eventlog/restart_event.txt", "w");
-    if (f == NULL) {
+    FILE *fOpen = fopen("/eventlog/restart_event.txt", "a");
+    if (fOpen == NULL) {
         ESP_LOGE(TAG, "Failed to open file for writing");
         return;
     }
 
-    fprintf(f, "Restart event after %d ms\n", restart_delay);
-    fclose(f);
+    fprintf(fOpen, "Restart event after %d ms\n", restart_delay);
+    fclose(fOpen);
 
     esp_restart();
 
