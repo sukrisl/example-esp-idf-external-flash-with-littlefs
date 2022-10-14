@@ -13,7 +13,8 @@
         "spi_common.h": "c",
         "esp_flash.h": "c",
         "*.contiki": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "*.ipp": "cpp"
     },
     "idf.port": "COM13",
     "idf.flashType": "UART"
